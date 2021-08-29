@@ -1,0 +1,69 @@
+if "open brave" in query:
+            path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+            speak("opening brave")
+            os.startfile(path)
+        
+        if "open discord" in query:
+            path = "C:\\Users\\atifu\AppData\\Local\\Discord\\app-1.0.9002\\Discord.exe"
+            speak("opening discord")
+            os.startfile(path)
+
+        if "play alan walker" in query:
+            driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
+            brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+
+            option = webdriver.ChromeOptions()
+            option.binary_location = brave_path
+            # option.add_argument("--incognito") OPTIONAL
+            # option.add_argument("--headless") OPTIONAL
+
+            # Create new Instance of Chrome
+            browser = webdriver.Chrome(executable_path=driver_path, chrome_options=option)
+
+            browser.get("https://music.youtube.com/channel/UCaXJEi-wOOVe2eZZHzyz4mQ")
+
+        if "open teams" in query:
+            path = "C:\\Users\\atifu\\AppData\\Local\\Microsoft\\Teams\\current\\Teams.exe"
+            speak("opening teams")
+            os.startfile(path)
+
+        if "open calculator" in query:
+            subprocess.Popen('C:\\Windows\\System32\\calc.exe')
+            speak("opening calculator")
+
+        if "open notepad" in query:
+            subprocess.Popen('C:\\Windows\\System32\\notepad.exe')
+            speak("opening notepad")
+
+        if "open wordpad" in query:
+            subprocess.Popen('C:\\Windows\\System32\\write.exe')
+            speak("opening wordpad")
+        
+        if "open call of duty" in query:
+            path = "D:\\Call of Duty Advanced Warfare\\s1_sp64_ship.exe"
+            speak("opening call of duty")
+            os.startfile(path)
+        
+        if "open content manager" in query:
+            path = "D:\\AssettoCorsav1.16ALLDLCs\\Assetto Corsa\\Assetto Corsa\\Content Manager.exe"
+            speak("opening content manager")
+            os.startfile(path)
+        
+        if "open steam" in query:
+            path= "C:\\Program Files (x86)\\Steam\\steam.exe"
+            speak("opening steam")
+            os.startfile(path)
+
+        if "stop steam" in query:
+            path= "C:\\Program Files (x86)\\Steam\\steam.exe"
+            speak("opening steam")
+            os.startfile(path)
+
+        if "what's the time" in query:
+            t = time.localtime()
+            current_time = time.strftime('%Y/%m/%d %I:%M:%S')
+            print(current_time)
+            speak(current_time)
+
+        if "wake up jarvis" in query:
+            speak("at your service SIR")
