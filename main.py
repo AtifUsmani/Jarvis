@@ -9,8 +9,6 @@ import time
 import wikipedia
 import python_weather
 import asyncio
-import random
-import csv
 from pygame import mixer
 import pandas as pd
 import numpy as np
@@ -83,17 +81,25 @@ if __name__ == "__main__":
 
         # logic buiding for tasks
 
-        if "open brave" in query:
+        if "brave" in query:
             path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
             speak("opening brave")
             os.startfile(path)
-        
-        if "open discord" in query:
+
+        if "close brave" in query:
+            speak("closed brave")
+            os.system("taskkill /im brave.exe")
+
+        if "discord" in query:
             path = "C:\\Users\\atifu\AppData\\Local\\Discord\\app-1.0.9002\\Discord.exe"
             speak("opening discord")
             os.startfile(path)
 
-        if "play music" in query:
+        if "close discord" in query:
+            speak("closed discord")
+            os.system("taskkill /im Discord.exe")
+
+        if "music" in query:
             driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
             brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
 
@@ -107,42 +113,113 @@ if __name__ == "__main__":
 
             browser.get("https://music.youtube.com/watch?v=foE1mO2yM04&list=LM")
 
-        if "open teams" in query:
+        if "google" in query:
+            driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
+            brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+
+            option = webdriver.ChromeOptions()
+            option.binary_location = brave_path
+            # option.add_argument("--incognito") OPTIONAL
+            # option.add_argument("--headless") OPTIONAL
+
+            # Create new Instance of Chrome
+            browser = webdriver.Chrome(executable_path=driver_path, chrome_options=option)
+
+            browser.get("https://www.google.com/")
+
+        if "youtube" in query:
+            driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
+            brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+
+            option = webdriver.ChromeOptions()
+            option.binary_location = brave_path
+            # option.add_argument("--incognito") OPTIONAL
+            # option.add_argument("--headless") OPTIONAL
+
+            # Create new Instance of Chrome
+            browser = webdriver.Chrome(executable_path=driver_path, chrome_options=option)
+
+            browser.get("https://www.youtube.com/")
+
+        if "github" in query:
+            driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
+            brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+
+            option = webdriver.ChromeOptions()
+            option.binary_location = brave_path
+            # option.add_argument("--incognito") OPTIONAL
+            # option.add_argument("--headless") OPTIONAL
+
+            # Create new Instance of Chrome
+            browser = webdriver.Chrome(executable_path=driver_path, chrome_options=option)
+
+            browser.get("https://github.com/")
+
+        if "teams" in query:
             path = "C:\\Users\\atifu\\AppData\\Local\\Microsoft\\Teams\\current\\Teams.exe"
             speak("opening teams")
             os.startfile(path)
 
-        if "open calculator" in query:
+        if "close teams" in query:
+            speak("closed teams")
+            os.system("taskkill /im Teams.exe")
+
+        if "calculator" in query:
             subprocess.Popen('C:\\Windows\\System32\\calc.exe')
             speak("opening calculator")
 
-        if "open notepad" in query:
+        if "close calculator" in query:
+            speak("closed calculator")
+            os.system("taskkill /im calc.exe")
+
+        if "notepad" in query:
             subprocess.Popen('C:\\Windows\\System32\\notepad.exe')
             speak("opening notepad")
 
-        if "open wordpad" in query:
+        if "close notepad" in query:
+            speak("closed notepad")
+            os.system("taskkill /im notepad.exe")
+
+        if "wordpad" in query:
             subprocess.Popen('C:\\Windows\\System32\\write.exe')
             speak("opening wordpad")
-        
-        if "open call of duty" in query:
+
+        if "close wordpad" in query:
+            speak("closed wordpad")
+            os.system("taskkill /im write.exe")
+
+        if "call of duty" in query:
             path = "D:\\Call of Duty Advanced Warfare\\s1_sp64_ship.exe"
             speak("opening call of duty")
             os.startfile(path)
+
+        if "close call of duty" in query:
+            speak("closed call of duty")
+            os.system("taskkill /im s1_sp64_ship.exe")
         
-        if "open content manager" in query:
+        if "content manager" in query:
             path = "D:\\AssettoCorsav1.16ALLDLCs\\Assetto Corsa\\Assetto Corsa\\Content Manager.exe"
             speak("opening content manager")
             os.startfile(path)
+
+        if "close content manager" in query:
+            speak("closed content manager")
+            os.system("taskkill /im Content Manager.exe")
+
         
         if "open steam" in query:
             path= "C:\\Program Files (x86)\\Steam\\steam.exe"
             speak("opening steam")
             os.startfile(path)
 
-        if "start steam" in query:
+        if "steam" in query:
             path= "C:\\Program Files (x86)\\Steam\\steam.exe"
             speak("opening steam")
             os.startfile(path)
+
+        if "close steam" in query:
+            speak("closed steam")
+            os.system("taskkill /im steam.exe")
 
         if "the time" in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
@@ -158,6 +235,24 @@ if __name__ == "__main__":
             speak("According to wikipedia")
             print(results)
             speak(results)
+
+        if "vmware" in query:
+            path = "C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmware.exe"
+            speak("opening vmware")
+            os.startfile(path)
+
+        if "close vmware" in query:
+            speak("closed vmware workstation pro 16")
+            os.system("taskkill /im vmware.exe")
+
+        if "download" in query:
+            speak("opening download manager")
+            path = "C:\\Program Files\\Softdeluxe\\Free Download Manager\\fdm.exe"
+            os.startfile(path)
+
+        if "close download" in query:
+            speak("closed download manager")
+            os.system("taskkill /im fdm.exe")
 
         if "alarm" in query:
             # Getting the current path of the script
