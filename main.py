@@ -7,59 +7,128 @@ from selenium.webdriver.chrome.options import Options
 import subprocess
 import time
 import wikipedia
-import python_weather
-import asyncio
 from pygame import mixer
 import pandas as pd
 import numpy as np
+import requests
+import geocoder
+import re, requests, subprocess, urllib.parse, urllib.request
+from bs4 import BeautifulSoup
+import webbrowser
+import psutil
 
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id)
+g = geocoder.ip('me')
 
-def time():
-    t = time.localtime()
-    current_time = time.strftime('%Y/%m/%d %I:%M:%S')
-    print(current_time)
-    speak(current_time)
+def playMusic(music_name):
+    query_string = urllib.parse.urlencode({"search_query": music_name})
+    formatUrl = urllib.request.urlopen("https://www.youtube.com/results?" + query_string)
+
+    search_results = re.findall(r"watch\?v=(\S{11})", formatUrl.read().decode())
+    clip = requests.get("https://www.youtube.com/watch?v=" + "{}".format(search_results[0]))
+    clip2 = "https://www.youtube.com/watch?v=" + "{}".format(search_results[0])
+
+    inspect = BeautifulSoup(clip.content, "html.parser")
+    yt_title = inspect.find_all("meta", property="og:title")
+
+    for concatMusic1 in yt_title:
+        pass
+
+    print(concatMusic1['content'])
+
+    subprocess.Popen(
+    "start /b " + "bootstrapper\\mpv.exe " + clip2 + " --no-video --loop=inf --input-ipc-server=\\\\.\\pipe\\mpv-pipe > output.txt",
+    shell=True)
+
+def playMusicVideo(music_name):
+    query_string = urllib.parse.urlencode({"search_query": music_name})
+    formatUrl = urllib.request.urlopen("https://www.youtube.com/results?" + query_string)
+
+    search_results = re.findall(r"watch\?v=(\S{11})", formatUrl.read().decode())
+    clip = requests.get("https://www.youtube.com/watch?v=" + "{}".format(search_results[0]))
+    clip2 = "https://www.youtube.com/watch?v=" + "{}".format(search_results[0])
+
+    inspect = BeautifulSoup(clip.content, "html.parser")
+    yt_title = inspect.find_all("meta", property="og:title")
+
+    for concatMusic1 in yt_title:
+        pass
+
+    print(concatMusic1['content'])
+
+    subprocess.Popen(
+    "start /b " + "bootstrapper\\mpv.exe " + clip2 + " --loop=inf --input-ipc-server=\\\\.\\pipe\\mpv-pipe > output.txt",
+    shell=True)
+
+def weather():
+    api_url = "https://fcc-weather-api.glitch.me/api/current?lat=" + \
+        str(g.latlng[0]) + "&lon=" + str(g.latlng[1])
+
+    data = requests.get(api_url)
+    data_json = data.json()
+    if data_json['cod'] == 200:
+        main = data_json['main']
+        wind = data_json['wind']
+        weather_desc = data_json['weather'][0]
+        speak(str(data_json['coord']['lat']) + 'latitude' + str(data_json['coord']['lon']) + 'longitude')
+        speak('Current location is ' + data_json['name'] + data_json['sys']['country'] + 'dia')
+        speak('weather type ' + weather_desc['main'])
+        speak('Wind speed is ' + str(wind['speed']) + ' metre per second')
+        speak('Temperature: ' + str(main['temp']) + 'degree celcius')
+        speak('Humidity is ' + str(main['humidity']))
 
 def speak(audio):
     engine.say(audio)
     print(audio)
     engine.runAndWait()
 
-async def getweather():
-    # declare the client. format defaults to metric system (celcius, km/h, etc.)
-    client = python_weather.Client(format=python_weather.METRIC)
+# def takecommand():
+#     r = sr.Recognizer()
+#     with sr.Microphone() as source:
+#         print("listening.....")
+#         r.pause_threshold = 1
+#         audio = r.listen(source,timeout=1,phrase_time_limit=5)
 
-    # fetch a weather forecast from a city
-    weather = await client.find("Bareilly")
+#     try:
+#         print("Recognizing.....")
+#         query = r.recognize_google(audio, language='en-in')
+#         print(f"user said: {query}")
 
-    # returns the current day's forecast temperature (int)
-    print(weather.current.temperature)
+#     except Exception as e:
+#         # speak("Say that again please...")
+#         return "none"
+#     return query
 
-    await client.close()
-def currentweather():
-    if __name__ == "__main__":
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(getweather())
-
-def takecommand():
+def takeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("listening.....")
+        print('Listening...')
         r.pause_threshold = 1
-        audio = r.listen(source,timeout=1,phrase_time_limit=5)
+        r.energy_threshold = 494
+        r.adjust_for_ambient_noise(source, duration=1.5)
+        audio = r.listen(source)
 
     try:
-        print("Recognizing.....")
+        print('Recognizing..')
         query = r.recognize_google(audio, language='en-in')
-        print(f"user said: {query}")
+        print(f'User said: {query}\n')
 
     except Exception as e:
-        # speak("Say that again please...")
-        return "none"
+        # print(e)
+
+        print('Say that again please...')
+        return 'None'
     return query
+
+def cpu():
+    usage = str(psutil.cpu_percent())
+    speak("CPU is at"+ usage + '%')
+
+    battery = psutil.sensors_battery()
+    speak("battery is at" + str(battery.percent) + '%')
+    # speak(battery.percent)
 
 def wish():
     hour = int(datetime.datetime.now().hour)
@@ -70,25 +139,84 @@ def wish():
         speak("good afternoon")
     else:
         speak("good evening")
-    
+    weather()
+    strTime = datetime.datetime.now().strftime("%H:%M:%S")
+    speak(f'the time is {strTime}')
+    cpu()
+    speak("All systems online")
     speak("i am jarvis SIR. please tell me how can i help you")
 
 if __name__ == "__main__":
     wish()
+    # os.popen(r"python3.9 C:\Users\atifu\Documents\GitHub\Jarvis\gestureControl.py")
     while True:
 
-        query = takecommand().lower()
+        query = takeCommand().lower()
 
         # logic buiding for tasks
+        if 'cpu' in query:
+            cpu()
 
-        if "brave" in query:
-            path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-            speak("opening brave")
-            os.startfile(path)
+        if 'open amazon' in query:
+            webbrowser.open_new_tab('https://amazon.com')
+
+        if 'search' in query:
+            speak('What do you want to search for?')
+            search = takeCommand()
+            url = 'https://google.com/search?q=' + search
+            webbrowser.open_new_tab(url)
+            speak('Here is What I found for' + search)
+
+        if 'your name' in query:
+            speak('My name is JARVIS')
+
+        if 'my location' in query:
+            speak('What is the location?')
+            location = takeCommand()
+            url = 'https://google.nl/maps/place/' + location + '/&amp;'
+            webbrowser.open_new_tab(url)
+            speak('Here is the location ' + location)
+
+        if 'voice' in query:
+            if 'female' in query:
+                engine.setProperty('voice', voices[0].id)
+            else:
+                engine.setProperty('voice', voices[1].id)
+            speak("Hello Sir, I have switched my voice. How is it?")
+
+        if 'remember that' in query:
+            speak("what should i remember sir")
+            rememberMessage = takeCommand()
+            speak("you said me to remember"+rememberMessage)
+            remember = open('data.txt', 'w')
+            remember.write(rememberMessage)
+            remember.close()
+
+        if 'do you remember anything' in query:
+            remember = open('data.txt', 'r')
+            speak("you said me to remember that" + remember.read())
+
+        if "play music" in query:
+            speak("Which song would you listen? ")
+            choice = takeCommand()
+            playMusic(choice)
+        
+        if "play music video" in query:
+            speak("Which song would you listen? ")
+            choice = takeCommand()
+            playMusicVideo(choice)
+
+        if "stop music" in query:
+            os.system("taskkill /f /im mpv.exe")
+            speak("terminated mpv.exe")
+
+        # if "brave" in query:
+        #     path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+        #     os.startfile(path)
 
         if "close brave" in query:
             speak("closed brave")
-            os.system("taskkill /im brave.exe")
+            os.system("taskkill /f /im brave.exe")
 
         if "discord" in query:
             path = "C:\\Users\\atifu\AppData\\Local\\Discord\\app-1.0.9002\\Discord.exe"
@@ -99,61 +227,17 @@ if __name__ == "__main__":
             speak("closed discord")
             os.system("taskkill /im Discord.exe")
 
-        if "music" in query:
-            driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
-            brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+        if "open youtube music" in query:
+            webbrowser.open_new_tab("https://music.youtube.com/")
 
-            option = webdriver.ChromeOptions()
-            option.binary_location = brave_path
-            # option.add_argument("--incognito") OPTIONAL
-            # option.add_argument("--headless") OPTIONAL
+        if "open google" in query:
+            webbrowser.open_new_tab("https://www.google.com/")
 
-            # Create new Instance of Chrome
-            browser = webdriver.Chrome(executable_path=driver_path, chrome_options=option)
-
-            browser.get("https://music.youtube.com/watch?v=foE1mO2yM04&list=LM")
-
-        if "google" in query:
-            driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
-            brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-
-            option = webdriver.ChromeOptions()
-            option.binary_location = brave_path
-            # option.add_argument("--incognito") OPTIONAL
-            # option.add_argument("--headless") OPTIONAL
-
-            # Create new Instance of Chrome
-            browser = webdriver.Chrome(executable_path=driver_path, chrome_options=option)
-
-            browser.get("https://www.google.com/")
-
-        if "youtube" in query:
-            driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
-            brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-
-            option = webdriver.ChromeOptions()
-            option.binary_location = brave_path
-            # option.add_argument("--incognito") OPTIONAL
-            # option.add_argument("--headless") OPTIONAL
-
-            # Create new Instance of Chrome
-            browser = webdriver.Chrome(executable_path=driver_path, chrome_options=option)
-
-            browser.get("https://www.youtube.com/")
+        if "open youtube" in query:
+            webbrowser.open_new_tab("https://www.youtube.com/")
 
         if "github" in query:
-            driver_path = "C:/Users/atifu/Documents/Jarvis/chromedriver.exe"
-            brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-
-            option = webdriver.ChromeOptions()
-            option.binary_location = brave_path
-            # option.add_argument("--incognito") OPTIONAL
-            # option.add_argument("--headless") OPTIONAL
-
-            # Create new Instance of Chrome
-            browser = webdriver.Chrome(executable_path=driver_path, chrome_options=option)
-
-            browser.get("https://github.com/")
+            webbrowser.open_new_tab("https://github.com/")
 
         if "teams" in query:
             path = "C:\\Users\\atifu\\AppData\\Local\\Microsoft\\Teams\\current\\Teams.exe"
@@ -164,7 +248,7 @@ if __name__ == "__main__":
             speak("closed teams")
             os.system("taskkill /im Teams.exe")
 
-        if "calculator" in query:
+        if "open calculator" in query:
             subprocess.Popen('C:\\Windows\\System32\\calc.exe')
             speak("opening calculator")
 
@@ -172,7 +256,7 @@ if __name__ == "__main__":
             speak("closed calculator")
             os.system("taskkill /im calc.exe")
 
-        if "notepad" in query:
+        if "open notepad" in query:
             subprocess.Popen('C:\\Windows\\System32\\notepad.exe')
             speak("opening notepad")
 
@@ -180,7 +264,7 @@ if __name__ == "__main__":
             speak("closed notepad")
             os.system("taskkill /im notepad.exe")
 
-        if "wordpad" in query:
+        if "open wordpad" in query:
             subprocess.Popen('C:\\Windows\\System32\\write.exe')
             speak("opening wordpad")
 
@@ -223,7 +307,7 @@ if __name__ == "__main__":
 
         if "the time" in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
-            speak(f"Sir, the time is {strTime}")
+            speak(f'Sir, the time is {strTime}')
 
         if "wake up" in query:
             speak("at your service SIR")
