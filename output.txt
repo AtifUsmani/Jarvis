@@ -1,3 +1,2 @@
- (+) Audio --aid=1 --alang=eng (*) (opus 2ch 48000Hz)
-     Subs  --sid=1 --slang=en 'vtt' (webvtt) (external)
+ (+) Audio --aid=1 --alang=eng (*) (aac 2ch 44100Hz)
 AO: [wasapi] 48000Hz stereo 2ch float

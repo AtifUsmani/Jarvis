@@ -1,8 +1,8 @@
 import re, requests, subprocess, urllib.parse, urllib.request
 from bs4 import BeautifulSoup
 
-music_name = "Linkin Park Numb"
-# music_name = "Sugar and Brownies"
+# music_name = "Linkin Park Numb"
+music_name = "Let me love you"
 
 query_string = urllib.parse.urlencode({"search_query": music_name})
 formatUrl = urllib.request.urlopen("https://www.youtube.com/results?" + query_string)
@@ -19,9 +19,9 @@ for concatMusic1 in yt_title:
 
 print(concatMusic1['content'])
 
-subprocess.Popen(
-"start /b " + "bootstrapper\\mpv.exe " + clip2 + " --no-video --loop=inf --input-ipc-server=\\\\.\\pipe\\mpv-pipe > output.txt",
-shell=True)
 # subprocess.Popen(
-# "start /b " + "bootstrapper\\mpv.exe " + clip2 + " --loop=inf --input-ipc-server=\\\\.\\pipe\\mpv-pipe > output.txt",
+# "start /b " + "bootstrapper\\mpv.exe " + clip2 + " --no-video --loop=inf --input-ipc-server=\\\\.\\pipe\\mpv-pipe > output.txt",
 # shell=True)
+subprocess.Popen(
+"start /b " + "bootstrapper\\mpv.exe " + clip2 + " --loop=inf --input-ipc-server=\\\\.\\pipe\\mpv-pipe > output.txt",
+shell=True)
